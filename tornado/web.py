@@ -886,8 +886,17 @@ class Application(object):
         """Appends the given handlers to our handler list."""
         if not host_pattern.endswith("$"):
             host_pattern += "$"
-        handlers = []
-        self.handlers.append((re.compile(host_pattern), handlers))
+
+        re_host_pattern = re.compile(host_pattern)
+        handlers = None
+
+        for p, h in self.handlers:
+            if p == re_host_pattern:
+                handlers = h
+
+        if handlers is None:
+            handlers = []
+            self.handlers.append((re_host_pattern, handlers))
 
         for handler_tuple in host_handlers:
             assert len(handler_tuple) in (2, 3)
